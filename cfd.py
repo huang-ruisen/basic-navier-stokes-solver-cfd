@@ -4,8 +4,6 @@ from matplotlib.patches import Rectangle, Circle, Polygon
 from matplotlib.animation import FuncAnimation
 import random
 
-global x
-global y
 x = np.arange(-101, 101, 1)
 y = np.arange(-101, 101, 1)
 x, y = np.meshgrid(x, y)
@@ -54,6 +52,7 @@ def intermediate_velocity(vx, vy, dt, nu, g, r):
     
     vxn = np.where(mask, vxn, 0)
     vyn = np.where(mask, vyn, 0)
+    
     return vxn, vyn
     
 def pressure_possion(vxn, vyn, rho, dt, r):
@@ -73,7 +72,7 @@ def pressure_possion(vxn, vyn, rho, dt, r):
         temp3 = neighbourgridsum - b[1:-1, 1:-1]
         p[1:-1, 1:-1] = 0.25 * temp3
                 
-    p = np.where(mask, p, 0)
+        p = np.where(mask, p, 0)
     
     return p
 
@@ -89,12 +88,10 @@ def correct_velocity(vxn, vyn, p, rho, dt):
      
 fig, ax = plt.subplots()
 
-speed = np.sqrt(vx ** 2 + vy ** 2)
-
 r = 25
 mask = x ** 2 + y ** 2 >= r ** 2
 
-for frame in range(1, 6):
+for frame in range(1, 31):
     vx[:, 0] = vx_flow
     vy[:, 0] = vy_flow
     
@@ -105,8 +102,11 @@ for frame in range(1, 6):
     vx_corrected = np.where(mask, vx_corrected, 0)
     vy_corrected = np.where(mask, vy_corrected, 0)
     
-    vx = vx_corrected
-    vy = vy_corrected
+vx_corrected = np.where(mask, vx_corrected, 0)
+vy_corrected = np.where(mask, vy_corrected, 0)
+vx = vx_corrected
+vy = vy_corrected
+speed = np.sqrt(vx ** 2 + vy ** 2)
     
 plt.streamplot(x, y, vx, vy, density = 2, color = speed, cmap = "viridis")
 plt.colorbar()
