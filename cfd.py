@@ -69,11 +69,9 @@ def pressure_possion(vxn, vyn, rho, dt, r):
     
     for k in range(1, 101):
         pn = np.copy(p)
-        for i in range(1, 200):
-            for j in range(1, 200):
-                neighbourgridsum = pn[i, j + 1] + pn[i, j - 1] + pn[i + 1, j] + pn[i-1, j]
-                temp3 = neighbourgridsum - b[i, j]
-                p[i, j] = 0.25 * temp3
+        neighbourgridsum = pn[2:, 1:-1] + pn[:-2, 1:-1] + pn[1:-1, :-2] + pn[1:-1, 2:]
+        temp3 = neighbourgridsum - b[1:-1, 1:-1]
+        p[1:-1, 1:-1] = 0.25 * temp3
                 
     p = np.where(mask, p, 0)
     
@@ -110,7 +108,7 @@ for frame in range(1, 6):
     vx = vx_corrected
     vy = vy_corrected
     
-plt.streamplot(x, y, vx, vy, density = 5, color = speed, cmap = "viridis")
+plt.streamplot(x, y, vx, vy, density = 2, color = speed, cmap = "viridis")
 plt.colorbar()
 ax.add_patch(shape)
 plt.show()
