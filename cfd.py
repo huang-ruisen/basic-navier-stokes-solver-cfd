@@ -4,8 +4,10 @@ from matplotlib.patches import Rectangle, Circle, Polygon
 from matplotlib.animation import FuncAnimation
 import random
 
-x = np.arange(-101, 101, 1)
-y = np.arange(-101, 101, 1)
+dx = 0.5
+dy = 0.5
+x = np.arange(-101, 101, dx)
+y = np.arange(-101, 101, dy)
 x, y = np.meshgrid(x, y)
 
 vx = np.zeros_like(x, dtype = float)
@@ -76,7 +78,7 @@ def pressure_possion(vxn, vyn, rho, dt, r):
     return p
 
 def correct_velocity(vxn, vyn, p, rho, dt):
-    dpdy, dpdx = np.gradient(p, 1, 1)
+    dpdy, dpdx = np.gradient(p, dx, dy)
     
     temp = dt / rho
     vx_corrected = vxn - temp * dpdx
