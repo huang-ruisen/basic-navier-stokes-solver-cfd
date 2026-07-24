@@ -68,11 +68,10 @@ def pressure_possion(vxn, vyn, rho, dt, r):
     
     for k in range(1, 101):
         pn = np.copy(p)
+        p = np.where(mask, p, 0)
         neighbourgridsum = pn[2:, 1:-1] + pn[:-2, 1:-1] + pn[1:-1, :-2] + pn[1:-1, 2:]
         temp3 = neighbourgridsum - b[1:-1, 1:-1]
         p[1:-1, 1:-1] = 0.25 * temp3
-                
-        p = np.where(mask, p, 0)
     
     return p
 
