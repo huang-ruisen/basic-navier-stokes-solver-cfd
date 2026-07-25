@@ -23,7 +23,7 @@ vy = vy + vy_flow
 
 sumvxvyerr = abs(vx_flow) + abs(vy_flow) + 10e-5
 dtunadjusted = dx / sumvxvyerr
-dt = dtunadjusted * 10e-3
+dt = dtunadjusted * 0.02
 
 r = 25
 
@@ -67,6 +67,7 @@ def pressure_possion(vxn, vyn, rho, dt, r):
     vydy = np.gradient(vyn, dy, dx)[0]
     dpdy, dpdx = np.gradient(p, dy, dx)
     mask = x ** 2 + y ** 2 >= r ** 2
+    mask_surface = x ** 2 + y ** 2 >= r ** 2
     nx = x / np.sqrt(x ** 2 + y ** 2)
     ny = y / np.sqrt(x ** 2 + y ** 2)
     dpdn = dpdx * nx + dpdy * ny
@@ -76,9 +77,10 @@ def pressure_possion(vxn, vyn, rho, dt, r):
     
     error = 10e-6
     
-    for k in range(1, 551):
+    for k in range(1, 951):
         pn = np.copy(p)
-        p = np.where(mask, p, p + dpdn * dx)
+        p = np.where(mask, p, 0)
+        p = np.where(mask_surface, p, p + dpdn * dx)
         neighbourgridsum = pn[2:, 1:-1] + pn[:-2, 1:-1] + pn[1:-1, :-2] + pn[1:-1, 2:]
         temp3 = b[1:-1, 1:-1] * dx ** 2
         temp4 = neighbourgridsum - temp3
@@ -104,7 +106,7 @@ mask = x ** 2 + y ** 2 >= r ** 2
 vx[:, 0] = vx_flow
 vy[:, 0] = vy_flow
 
-for f in range(1, 51):
+for f in range(1, 91):
     
     vxn, vyn = intermediate_velocity(vx, vy, dt, 1.6e-5, 0, r)
     p = pressure_possion(vxn, vyn, 1.2, dt, r)
